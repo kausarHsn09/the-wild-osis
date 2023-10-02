@@ -1,27 +1,38 @@
-import styled from "styled-components"
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-const H1=styled.h1`
-  font-size: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-`
-const Button = styled.button`
-  font-size: 1.4rem;
-  font-weight:400;
-  border:none;
-  background-color: red;
-  padding: 0.8rem 1.2rem;
-`
+import GlobalStyles from "./styles/GlobalStyles";
+import Dashboard from "./pages/Dashboard";
+import Bookings from "./pages/Bookings";
+import Cabins from "./pages/Cabins";
+import Users from "./pages/Users";
+import Settings from "./pages/Settings";
+import Account from "./pages/Account";
+import Login from "./pages/Login";
+import PageNotFound from "./pages/PageNotFound";
+import AppLayout from "./ui/AppLayout";
 
-const StyledApp = styled.div`
-  background-color: green;
-`
-const App = () => {
+function App() {
   return (
-    <StyledApp>
-      <H1>This is Noting</H1>
-      <Button>Click</Button>
-    </StyledApp>
-  )
+    <>
+      <GlobalStyles />
+      <BrowserRouter>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route index element={<Navigate replace to="dashboard" />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="bookings" element={<Bookings />} />
+            <Route path="cabins" element={<Cabins />} />
+            <Route path="users" element={<Users />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="account" element={<Account />} />
+          </Route>
+
+          <Route path="login" element={<Login />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
 }
 
-export default App
+export default App;
