@@ -57,3 +57,13 @@ const Empty = styled.p`
   text-align: center;
   margin: 2.4rem;
 `;
+
+
+
+const Table = () => {
+  return (
+    <StyledTable>Table</StyledTable>
+  )
+}
+
+export default Table
