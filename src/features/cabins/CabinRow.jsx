@@ -1,10 +1,11 @@
-import styled from 'styled-components';
-import { formatCurrency } from '../../utils/helpers';
-import { useState } from 'react';
-import CreateCabinForm from './CreateCabinForm';
-import { useDeleteCabin } from './useDeleteCabin';
-import {HiPencil, HiSquare2Stack, HiTrash} from 'react-icons/hi2'
- 
+import styled from "styled-components";
+import { formatCurrency } from "../../utils/helpers";
+import { useState } from "react";
+import CreateCabinForm from "./CreateCabinForm";
+import { useDeleteCabin } from "./useDeleteCabin";
+import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
+import { useCreateCabin } from "./useCreateCabin";
+
 const TableRow = styled.div`
   display: grid;
   grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
@@ -31,64 +32,74 @@ const Cabin = styled.div`
   font-size: 1.6rem;
   font-weight: 600;
   color: var(--color-grey-600);
-  font-family: 'Sono';
+  font-family: "Sono";
 `;
 
 const Price = styled.div`
-  font-family: 'Sono';
+  font-family: "Sono";
   font-weight: 600;
 `;
 
 const Discount = styled.div`
-  font-family: 'Sono';
+  font-family: "Sono";
   font-weight: 500;
   color: var(--color-green-700);
 `;
-const CabinRow = ({cabin}) => {
-  const [showForm, setShowForm] = useState(false)
+const CabinRow = ({ cabin }) => {
+  const [showForm, setShowForm] = useState(false);
 
-  const {isDeleting,deleteCabin} = useDeleteCabin()
+  const { isDeleting, deleteCabin } = useDeleteCabin();
+  const {isCreating,createCabin}=useCreateCabin()
+
+  
   const {
-        id: cabinId,
-        name,
-        maxCapacity,
-        regularPrice,
-        discount,
-        image,
-        description,
-      } = cabin;
+    id: cabinId,
+    name,
+    maxCapacity,
+    regularPrice,
+    discount,
+    image,
+    description,
+  } = cabin;
 
- 
+  function handleDuplicate(){
+    createCabin({
+      name: `copy of ${name}`,
+      maxCapacity,
+      regularPrice,
+      discount,
+      image,
+      description
+    })
+  }
 
   return (
     <>
-    <TableRow role='row'>
-      <Img src={image}  />
-      <Cabin>{name}</Cabin>
-      <div>Fits up {maxCapacity} guests</div>
-      <Price>{formatCurrency(regularPrice)}</Price>
-      <Discount>{formatCurrency(discount)}</Discount>
-      <div>
-      <button onClick={()=> setShowForm((show)=>!show)}><HiSquare2Stack/></button>
-      <button onClick={()=> setShowForm((show)=>!show)}><HiPencil/></button>
-      <button disabled={isDeleting} onClick={()=>deleteCabin(cabinId)}><HiTrash/></button>
-      </div>
-    </TableRow>
+      <TableRow role="row">
+        <Img src={image} />
+        <Cabin>{name}</Cabin>
+        <div>Fits up {maxCapacity} guests</div>
+        <Price>{formatCurrency(regularPrice)}</Price>
+        <Discount>{discount? formatCurrency(discount):'.'}</Discount>
+        <div>
+          <button onClick={handleDuplicate}>
+            <HiSquare2Stack />
+          </button>
+          <button onClick={() => setShowForm((show) => !show)}>
+            <HiPencil />
+          </button>
+          <button disabled={isDeleting} onClick={() => deleteCabin(cabinId)}>
+            <HiTrash />
+          </button>
+        </div>
+      </TableRow>
 
-    {showForm && <CreateCabinForm cabinToEdit={cabin}/>}
+      {showForm && <CreateCabinForm cabinToEdit={cabin} />}
     </>
-  )
-}
+  );
+};
 
-export default CabinRow
-
-
-
-
-
-
-
-
+export default CabinRow;
 
 // import styled from 'styled-components';
 // // import { HiPencil, HiTrash, HiSquare2Stack } from 'react-icons/hi2';
@@ -183,7 +194,7 @@ export default CabinRow
 //       ) : (
 //         <span>&mdash;</span>
 //       )}
-// {/* 
+// {/*
 //       <Modal>
 //         <Menus.Menu>
 //           <Menus.Toggle id={cabinId} />
@@ -202,7 +213,7 @@ export default CabinRow
 //               <Menus.Button icon={<HiTrash />}>Delete cabin</Menus.Button>
 //             </Modal.Toggle>
 //           </Menus.List>
-//         // </Menus.Menu> */} 
+//         // </Menus.Menu> */}
 
 //         {/* This needs to be OUTSIDE of the menu, which in no problem. The compound component gives us this flexibility */}
 //         {/* <Modal.Window name='edit'>
