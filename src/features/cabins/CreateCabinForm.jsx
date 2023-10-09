@@ -4,56 +4,37 @@ import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
+
+
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createEditCabin } from "../../services/apiCabins";
-import toast from "react-hot-toast";
+import { useCreateCabin } from "./useCreateCabin";
+import { useEditCabin } from "./useEditCabin";
 
 function CreateCabinForm({ cabinToEdit = {} }) {
-
   const { id: editID, ...editValue } = cabinToEdit;
   const isEditSession = Boolean(editID);
+  
 
   const { register, handleSubmit, getValues, formState, reset } = useForm({
     defaultValues: isEditSession ? editValue : {},
   });
-
+  const {isCreating,createCabin} =  useCreateCabin()
+  const { isEditing,editCabin} = useEditCabin()
   const { errors } = formState;
 
-  const queryClient = useQueryClient();
 
-  const { isLoading: isCreating, mutate: createCabin } = useMutation({
-    mutationFn: createEditCabin,
-    onSuccess: () => {
-      toast.success("Cabin Added");
-      queryClient.invalidateQueries({
-        queryKey: ["cabins"],
-      });
-      reset();
-    },
-    onError: (error) => toast.error(error.message),
-  });
-
-
-  const { isLoading: isEditing, mutate: editCabin } = useMutation({
-    mutationFn: ({ cabindata, id }) => createEditCabin(cabindata, id),
-    onSuccess: () => {
-      toast.success("Cabin is Edi");
-      queryClient.invalidateQueries({
-        queryKey: ["cabins"],
-      });
-      reset();
-    },
-    onError: (error) => toast.error(error.message),
-  });
 
   const onSubmit = (data) => {
     const image = typeof data.image === "string" ? data.image : data.image[0];
-    
+
     if (isEditSession) {
-      editCabin({ cabindata: { ...data, image }, id: editID });
+      editCabin({ cabindata: { ...data, image }, id: editID },{
+        onSuccess:()=>reset()
+      });
     } else {
-      createCabin({ ...data, image: image });
+      createCabin({ ...data, image: image },{
+        onSuccess:()=>reset()
+      });
     }
   };
 
