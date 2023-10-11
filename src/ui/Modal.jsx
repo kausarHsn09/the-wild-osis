@@ -68,6 +68,7 @@ const Modal = ({ children }) => {
 
 const Open = ({ children, opens:openWindowName }) => {
   const { open } = useContext(ModalConetxt);
+  
   return cloneElement(children, { onClick: () => open(openWindowName) });
 };
 
@@ -85,7 +86,9 @@ const Window = ({ children,name }) => {
    return ()=> document.removeEventListener('click',handleClick,true)
   },[close])
 
-  if(name !== openName) return null
+  if(name !== openName || !name) return null
+
+
   return createPortal(
     <Overlay>
       <StyledModal ref={ref}>
